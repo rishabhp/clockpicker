@@ -134,8 +134,8 @@
 						}, duration / 2);
 					}
 				}).appendTo(this.amPmBlock);
-				
-				
+
+
 			$('<button type="button" class="btn btn-sm btn-default clockpicker-button pm-button">' + "PM" + '</button>')
 				.on("click", function() {
 					self.amOrPm = 'PM';
@@ -147,9 +147,9 @@
 						}, duration / 2);
 					}
 				}).appendTo(this.amPmBlock);
-				
+
 		}
-		
+
 		if (! options.autoclose) {
 			// If autoclose is not setted, append a button
 			$('<button type="button" class="btn btn-sm btn-default btn-block clockpicker-button">' + options.donetext + '</button>')
@@ -187,6 +187,9 @@
 					top: dialRadius - Math.cos(radian) * radius - tickRadius
 				});
 				tick.html(i === 0 ? 12 : i);
+				if (i <= 6 && self.amOrPm !== 'PM') {
+					tick.addClass('hour-disabled');
+				}
 				hoursView.append(tick);
 				tick.on(mousedownEvent, mousedown);
 			}
@@ -480,13 +483,13 @@
 
 			this.isAppended = true;
 		}
-		
+
 		// Get the time from the input field
 		this.parseInputValue();
-		
+
 		this.spanHours.html(leadingZero(this.hours));
 		this.spanMinutes.html(leadingZero(this.minutes));
-		
+
 		if (this.options.twelvehour) {
 			this.spanAmPm.empty().append(this.amOrPm);
 		}
@@ -717,7 +720,7 @@
 		if  (this.options.twelvehour) {
 			value = value + this.amOrPm;
 		}
-		
+
 		this.input.prop('value', value);
 		if (value !== last) {
 			this.input.triggerHandler('change');
