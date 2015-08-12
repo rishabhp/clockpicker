@@ -125,8 +125,14 @@
 
 			$('<button type="button" class="btn btn-sm btn-default clockpicker-button am-button">' + "AM" + '</button>')
 				.on("click", function() {
-					self.amOrPm = "AM";
-					$('.clockpicker-span-am-pm').empty().append('AM');
+				self.amOrPm = "AM";
+				$('.clockpicker-span-am-pm').empty().append('AM');
+				
+				if (options.ampmSubmit) {
+					setTimeout(function () {
+							self.done();
+						}, duration / 2);
+					}  
 				}).appendTo(this.amPmBlock);
 				
 				
@@ -134,6 +140,12 @@
 				.on("click", function() {
 					self.amOrPm = 'PM';
 					$('.clockpicker-span-am-pm').empty().append('PM');
+
+					if (options.ampmSubmit) {
+						setTimeout(function () {
+							self.done();
+						}, duration / 2);
+					}
 				}).appendTo(this.amPmBlock);
 				
 		}
@@ -175,6 +187,9 @@
 					top: dialRadius - Math.cos(radian) * radius - tickRadius
 				});
 				tick.html(i === 0 ? 12 : i);
+				if (i <= 6 && self.amOrPm !== 'PM') {
+					tick.addClass('hour-disabled');
+				} 
 				hoursView.append(tick);
 				tick.on(mousedownEvent, mousedown);
 			}
@@ -277,10 +292,12 @@
 					self.toggleView('minutes', duration / 2);
 				} else {
 					if (options.autoclose) {
-						self.minutesView.addClass('clockpicker-dial-out');
-						setTimeout(function(){
-							self.done();
-						}, duration / 2);
+						if (!options.ampmSubmit) {
+							self.minutesView.addClass('clockpicker-dial-out');
+							setTimeout(function () {
+								self.done();
+							}, duration / 2);
+						}  
 					}
 				}
 				plate.prepend(canvas);
@@ -356,7 +373,8 @@
 		twelvehour: false,	// change to 12 hour AM/PM clock from 24 hour
 		vibrate: true,		// vibrate the device when dragging clock hand
 		hourstep: 1,		// allow to multi increment the hour
-		minutestep: 1		// allow to multi increment the minute
+		minutestep: 1,		// allow to multi increment the minute  
+		ampmSubmit: false	// allow submit with AM and PM buttons instead of the minute selection/picker  
 	};
 
 	// Show or hide popover

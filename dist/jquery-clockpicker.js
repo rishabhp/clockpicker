@@ -125,11 +125,11 @@
 
 			$('<button type="button" class="btn btn-sm btn-default clockpicker-button am-button">' + "AM" + '</button>')
 				.on("click", function() {
-					self.amOrPm = "AM";
-					$('.clockpicker-span-am-pm').empty().append('AM');
+				self.amOrPm = "AM";
+				$('.clockpicker-span-am-pm').empty().append('AM');
 
-					if (options.ampmSubmit) {
-						setTimeout(function(){
+				if (options.ampmSubmit) {
+					setTimeout(function(){
 							self.done();
 						}, duration / 2);
 					}
