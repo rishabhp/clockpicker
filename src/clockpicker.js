@@ -378,6 +378,13 @@
 		amPmHtml: function (amOrPm) { //A callback function that builds the AM/PM buttons
 			var buttonClass = amOrPm.toLowerCase() + '-button';
 			return '<button type="button" class="btn btn-sm btn-default clockpicker-button ' + buttonClass + '">' + amOrPm + '</button>';
+		},
+		formatValue: function (hours, minutes, amOrPm, options) { //A callback function that formats the time value insertted into the input
+			var value = leadingZero(hours) + ':' + leadingZero(minutes);
+			if (options.twelvehour) {
+				value = value + amOrPm;
+			}
+			return value;
 		}
 	};
 
@@ -719,11 +726,8 @@
 	ClockPicker.prototype.done = function() {
 		raiseCallback(this.options.beforeDone);
 		this.hide();
-		var last = this.input.prop('value'),
-			value = leadingZero(this.hours) + ':' + leadingZero(this.minutes);
-		if  (this.options.twelvehour) {
-			value = value + this.amOrPm;
-		}
+		var last = this.input.prop('value');
+		var value = this.options.formatValue(this.hours, this.minutes, this.amOrPm, this.options);
 		
 		this.input.prop('value', value);
 		if (value !== last) {
