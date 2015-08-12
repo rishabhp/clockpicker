@@ -123,7 +123,7 @@
 		// Setup for for 12 hour clock if option is selected
 		if (options.twelvehour) {
 
-			$('<button type="button" class="btn btn-sm btn-default clockpicker-button am-button">' + "AM" + '</button>')
+			$(options.amPmHtml("AM"))
 				.on("click", function() {
 				self.amOrPm = "AM";
 				$('.clockpicker-span-am-pm').empty().append('AM');
@@ -136,7 +136,7 @@
 				}).appendTo(this.amPmBlock);
 				
 				
-			$('<button type="button" class="btn btn-sm btn-default clockpicker-button pm-button">' + "PM" + '</button>')
+			$(options.amPmHtml("PM"))
 				.on("click", function() {
 					self.amOrPm = 'PM';
 					$('.clockpicker-span-am-pm').empty().append('PM');
@@ -374,7 +374,11 @@
 		vibrate: true,		// vibrate the device when dragging clock hand
 		hourstep: 1,		// allow to multi increment the hour
 		minutestep: 1,		// allow to multi increment the minute  
-		ampmSubmit: false	// allow submit with AM and PM buttons instead of the minute selection/picker  
+		ampmSubmit: false,	// allow submit with AM and PM buttons instead of the minute selection/picker
+		amPmHtml: function (amOrPm) { //A callback function that builds the AM/PM buttons
+			var buttonClass = amOrPm.toLowerCase() + '-button';
+			return '<button type="button" class="btn btn-sm btn-default clockpicker-button ' + buttonClass + '">' + amOrPm + '</button>';
+		}
 	};
 
 	// Show or hide popover
