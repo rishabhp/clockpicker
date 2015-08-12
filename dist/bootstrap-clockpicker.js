@@ -123,17 +123,29 @@
 		// Setup for for 12 hour clock if option is selected
 		if (options.twelvehour) {
 
-			$('<button type="button" class="btn btn-sm btn-default clockpicker-button am-button">' + "AM" + '</button>')
+			$(options.amPmHtml("AM"))
 				.on("click", function() {
-					self.amOrPm = "AM";
-					$('.clockpicker-span-am-pm').empty().append('AM');
+				self.amOrPm = "AM";
+				$('.clockpicker-span-am-pm').empty().append('AM');
+				
+				if (options.ampmSubmit) {
+					setTimeout(function () {
+							self.done();
+						}, duration / 2);
+					}  
 				}).appendTo(this.amPmBlock);
 				
 				
-			$('<button type="button" class="btn btn-sm btn-default clockpicker-button pm-button">' + "PM" + '</button>')
+			$(options.amPmHtml("PM"))
 				.on("click", function() {
 					self.amOrPm = 'PM';
 					$('.clockpicker-span-am-pm').empty().append('PM');
+
+					if (options.ampmSubmit) {
+						setTimeout(function () {
+							self.done();
+						}, duration / 2);
+					}
 				}).appendTo(this.amPmBlock);
 				
 		}
@@ -175,6 +187,9 @@
 					top: dialRadius - Math.cos(radian) * radius - tickRadius
 				});
 				tick.html(i === 0 ? 12 : i);
+				if (i <= 6 && self.amOrPm !== 'PM') {
+					tick.addClass('hour-disabled');
+				} 
 				hoursView.append(tick);
 				tick.on(mousedownEvent, mousedown);
 			}
@@ -277,10 +292,12 @@
 					self.toggleView('minutes', duration / 2);
 				} else {
 					if (options.autoclose) {
-						self.minutesView.addClass('clockpicker-dial-out');
-						setTimeout(function(){
-							self.done();
-						}, duration / 2);
+						if (!options.ampmSubmit) {
+							self.minutesView.addClass('clockpicker-dial-out');
+							setTimeout(function () {
+								self.done();
+							}, duration / 2);
+						}  
 					}
 				}
 				plate.prepend(canvas);
@@ -356,7 +373,19 @@
 		twelvehour: false,	// change to 12 hour AM/PM clock from 24 hour
 		vibrate: true,		// vibrate the device when dragging clock hand
 		hourstep: 1,		// allow to multi increment the hour
-		minutestep: 1		// allow to multi increment the minute
+		minutestep: 1,		// allow to multi increment the minute  
+		ampmSubmit: false,	// allow submit with AM and PM buttons instead of the minute selection/picker
+		amPmHtml: function (amOrPm) { //A callback function that builds the AM/PM buttons
+			var buttonClass = amOrPm.toLowerCase() + '-button';
+			return '<button type="button" class="btn btn-sm btn-default clockpicker-button ' + buttonClass + '">' + amOrPm + '</button>';
+		},
+		formatValue: function (hours, minutes, amOrPm, options) { //A callback function that formats the time value insertted into the input
+			var value = leadingZero(hours) + ':' + leadingZero(minutes);
+			if (options.twelvehour) {
+				value = value + amOrPm;
+			}
+			return value;
+		}
 	};
 
 	// Show or hide popover
@@ -697,11 +726,8 @@
 	ClockPicker.prototype.done = function() {
 		raiseCallback(this.options.beforeDone);
 		this.hide();
-		var last = this.input.prop('value'),
-			value = leadingZero(this.hours) + ':' + leadingZero(this.minutes);
-		if  (this.options.twelvehour) {
-			value = value + this.amOrPm;
-		}
+		var last = this.input.prop('value');
+		var value = this.options.formatValue(this.hours, this.minutes, this.amOrPm, this.options);
 		
 		this.input.prop('value', value);
 		if (value !== last) {
